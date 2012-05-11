@@ -384,7 +384,7 @@ def usage(argv):
     print '%s <DISK IMAGE>'%argv[0]
     sys.exit()
     
-### test ####
+
 def main():
     
     try:
@@ -395,7 +395,7 @@ def main():
         sys.exit()
     
     try:
-        if not(sys.argv[1]):
+        if len(sys.argv) != 2:
             usage(sys.argv)
             sys.exit()
     
