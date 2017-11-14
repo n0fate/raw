@@ -53,7 +53,7 @@ def unsigned32(n):
 def get_gpt_header(fhandle, fbuf, lba):
     fbuf = get_lba(fhandle, lba, 1)
     
-    gpt_header = struct.unpack(GPT_HEADER_FORMAT, fbuf)
+    gpt_header = struct.unpack(GPT_HEADER_FORMAT, fbuf[:512])
     
     crc32_header_value = calc_header_crc32(fbuf, gpt_header[2])
     
