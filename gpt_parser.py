@@ -378,7 +378,7 @@ def an_part_table(partition_table, gpt_header):
         print('      => Disk Offset: 0x%.8X'%(part_entry[3] * LBA_SIZE))
         print('  [-] Attribute flags: %d, %s'%(part_entry[4], part_attribute(part_entry[4])))
         # print('  [-] Partition Name: %s'%unicode(part_entry[5]))
-        print('  [-] Partition Name: %s'%str(part_entry[5]))
+        print('  [-] Partition Name: \"%s\"'%part_entry[5].decode("UTF_16")) # UCS-2
         count += 1
 
 def usage(argv):
