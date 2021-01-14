@@ -48,7 +48,7 @@ def get_lba(fhandle, entry_number, count):
     return fbuf
 
 def unsigned32(n):
-  return n & 0xFFFFFFFFL
+  return n & 0xFFFFFFFF
 
 def get_gpt_header(fhandle, fbuf, lba):
     fbuf = get_lba(fhandle, lba, 1)
@@ -90,23 +90,23 @@ def an_gpt_header(gpt_header, crc32_header_value):
     num_of_part_entry = gpt_header[11]
     size_of_part_entry = gpt_header[12]
     crc32_of_partition_array = gpt_header[13]
-    print '[+] Primary GPT header'
-    print ' [-] Signature: %s'%signature
-    print ' [-] Revision: %d'%revision
-    print ' [-] Header Size: %d'%headersize
+    print('[+] Primary GPT header')
+    print(' [-] Signature: %s'%signature)
+    print(' [-] Revision: %d'%revision)
+    print(' [-] Header Size: %d'%headersize)
     if crc32_header_value == crc32_header:
-        print ' [-] CRC32 of header: %X (VALID) => Real: %X'%(crc32_header, crc32_header_value)
+        print(' [-] CRC32 of header: %X (VALID) => Real: %X'%(crc32_header, crc32_header_value))
     else:
-        print ' [-] WARNING!! CRC32 of header: %X (INVALID) => Real: %X'%(crc32_header, crc32_header_value)
-    print ' [-] Current LBA: 0x%.8X'%currentlba
-    print ' [-] Backup LBA: 0x%.8X'%backuplba
-    print ' [-] First usable LBA for partitions: 0x%.8X'%first_use_lba_for_partitions
-    print ' [-] Last usable LBA for partitions: 0x%.8X'%last_use_lba_for_partitions
-    print ' [-] Disk GUID: %s'%str(disk_guid).upper()
-    print ' [-] Partition entries starting LBA: 0x%.8X'%part_entry_start_lba
-    print ' [-] Number of partition entries: %d'%num_of_part_entry
-    print ' [-] Size of partition entry: 0x%.8X'%size_of_part_entry
-    print ' [-] CRC32 of partition array: 0x%.8X'%crc32_of_partition_array
+        print(' [-] WARNING!! CRC32 of header: %X (INVALID) => Real: %X'%(crc32_header, crc32_header_value))
+    print(' [-] Current LBA: 0x%.8X'%currentlba)
+    print(' [-] Backup LBA: 0x%.8X'%backuplba)
+    print(' [-] First usable LBA for partitions: 0x%.8X'%first_use_lba_for_partitions)
+    print(' [-] Last usable LBA for partitions: 0x%.8X'%last_use_lba_for_partitions)
+    print(' [-] Disk GUID: %s'%str(disk_guid).upper())
+    print(' [-] Partition entries starting LBA: 0x%.8X'%part_entry_start_lba)
+    print(' [-] Number of partition entries: %d'%num_of_part_entry)
+    print(' [-] Size of partition entry: 0x%.8X'%size_of_part_entry)
+    print(' [-] CRC32 of partition array: 0x%.8X'%crc32_of_partition_array)
 
 # get partition entry
 def get_part_entry(fbuf, offset, size):
@@ -349,12 +349,12 @@ def an_part_table(partition_table, gpt_header):
     part_list = []
     
     crc32_part_value = unsigned32(zlib.crc32(partition_table))
-    print ''
-    print '[+] Partition table'
+    print('')
+    print('[+] Partition table')
     if crc32_part_value == crc32_of_partition_array:
-        print ' [-] CRC32 Check : %.8X (VALID)'%crc32_part_value
+        print(' [-] CRC32 Check : %.8X (VALID)'%crc32_part_value)
     else:
-        print ' [-] WARNING!! CRC32 Check : %.8X (INVALID)'%crc32_part_value
+        print(' [-] WARNING!! CRC32 Check : %.8X (INVALID)'%crc32_part_value)
     
     for part_entry_num in range(0, num_of_part_entry):
         part_entry = get_part_entry(partition_table, size_of_part_entry*part_entry_num, size_of_part_entry)
@@ -367,21 +367,22 @@ def an_part_table(partition_table, gpt_header):
     
     count = 1
     for part_entry in part_list:
-        print ''
-        print ' [-] Partition %d'%count
-        print '  [-] Partition type GUID: %s'%str(uuid.UUID(bytes_le=part_entry[0])).upper()
-        print '      => Partition type: %s, %s'%(check_partition_guid_type(str(uuid.UUID(bytes_le=part_entry[0])).upper()))
-        print '  [-] Unique partition GUID: %s'%str(uuid.UUID(bytes_le=part_entry[1])).upper()
-        print '  [-] First LBA: %d'%part_entry[2]
-        print '      => Disk Offset: 0x%.8X'%(part_entry[2] * LBA_SIZE)
-        print '  [-] Last LBA: %d'%part_entry[3]
-        print '      => Disk Offset: 0x%.8X'%(part_entry[3] * LBA_SIZE)
-        print '  [-] Attribute flags: %d, %s'%(part_entry[4], part_attribute(part_entry[4]))
-        print '  [-] Partition Name: %s'%unicode(part_entry[5])
+        print('')
+        print(' [-] Partition %d'%count)
+        print('  [-] Partition type GUID: %s'%str(uuid.UUID(bytes_le=part_entry[0])).upper())
+        print('      => Partition type: %s, %s'%(check_partition_guid_type(str(uuid.UUID(bytes_le=part_entry[0])).upper())))
+        print('  [-] Unique partition GUID: %s'%str(uuid.UUID(bytes_le=part_entry[1])).upper())
+        print('  [-] First LBA: %d'%part_entry[2])
+        print('      => Disk Offset: 0x%.8X'%(part_entry[2] * LBA_SIZE))
+        print('  [-] Last LBA: %d'%part_entry[3])
+        print('      => Disk Offset: 0x%.8X'%(part_entry[3] * LBA_SIZE))
+        print('  [-] Attribute flags: %d, %s'%(part_entry[4], part_attribute(part_entry[4])))
+        # print('  [-] Partition Name: %s'%unicode(part_entry[5]))
+        print('  [-] Partition Name: %s'%str(part_entry[5]))
         count += 1
 
 def usage(argv):
-    print '%s <DISK IMAGE>'%argv[0]
+    print('%s <DISK IMAGE>'%argv[0])
     sys.exit()
     
 
@@ -390,7 +391,7 @@ def main():
     try:
         option, args = getopt.getopt(sys.argv[1:], '')
 
-    except getopt.GetoptError, err:
+    except getopt.GetoptError as err:
         usage(sys.argv)
         sys.exit()
     
@@ -406,7 +407,7 @@ def main():
     try:
         f = open(sys.argv[1], 'rb')
     except IOError:
-        print '[+] WARNING!! Can not open disk image.'
+        print('[+] WARNING!! Can not open disk image.')
         #usage(sys.argv)
         sys.exit()
     
@@ -421,10 +422,10 @@ def main():
     
     h = hashlib.md5()
     h.update(gpt_buf)
-    print ''
-    print '[+] Primary GPT header md5: %s'%h.hexdigest()
+    print('')
+    print('[+] Primary GPT header md5: %s'%h.hexdigest())
     
-    print ''
+    print('')
     
     # Partition entries
     fbuf = get_part_table_area(f, gpt_header)
@@ -432,23 +433,23 @@ def main():
     
     h = hashlib.md5()
     h.update(fbuf)
-    print ''
-    print '[+] Partition table md5: %s'%h.hexdigest()
+    print('')
+    print('[+] Partition table md5: %s'%h.hexdigest())
     
     
     ## backup GPT header
-    print ''
+    print('')
     try:
         gpt_header, crc32_header_value, gpt_buf = get_gpt_header(f, fbuf, gpt_header[6])
         an_gpt_header(gpt_header, crc32_header_value)
         
         h = hashlib.md5()
         h.update(gpt_buf)
-        print ''
-        print '[+] Backup GPT header md5: %s'%h.hexdigest()
+        print('')
+        print('[+] Backup GPT header md5: %s'%h.hexdigest())
     except struct.error:
-        print '[+] WARNING!! Backup GPT header can not found. Check your disk image.'
-        print '[+] WARNING!! Backup GPT header offset: 0x%.8X'%(gpt_header[6] * LBA_SIZE)
+        print('[+] WARNING!! Backup GPT header can not found. Check your disk image.')
+        print('[+] WARNING!! Backup GPT header offset: 0x%.8X'%(gpt_header[6] * LBA_SIZE))
     
     f.close()
     
